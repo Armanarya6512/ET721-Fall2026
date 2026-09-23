@@ -2,6 +2,7 @@
 Student Name :- Arma Arya
 date :- 9/23/2026
 lab 6
+Student ID :- 24754624
 
 #open() function allows user to open and write Files
 
