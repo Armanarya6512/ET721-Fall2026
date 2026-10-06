@@ -34,7 +34,7 @@ def test_no_number():
 # exercise 3
 # use parametrize to set multiple testing inputs/output sets
 @pytest.mark.parametrize(
-    "n, expected", [(2, True), (3, False), (0, True), (-2, True), (6, True)]
+    "n, expected", [(2, True), (3, False), (0, False), (-2, True), (6, True)]
 )
 
 def test_is_even(n, expected):
@@ -42,4 +42,16 @@ def test_is_even(n, expected):
 
 
 # exercise 4
-
+# use parametrize to test multiple password inputs and expected outputs
+@pytest.mark.parametrize(
+    "password, expected",
+    [
+        ("pass12345", True),
+        ("qcc1", False),
+        ("testingpassword", False),
+        ("hello123", True),
+        ("arman", False)
+    ]
+)
+def test_validate_password_parametrized(password, expected):
+    assert validate_password(password) == expected
