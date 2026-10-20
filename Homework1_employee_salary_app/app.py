@@ -15,15 +15,15 @@ def index():
     new_salary = None
     
     if request.method == 'POST':
-        # Retrieve form data
+        
         name = request.form['employee_name']
         emp_id = int(request.form['employee_id'])
         salary = int(request.form['salary'])
         
-        # Calculate 5% salary increase
+        
         new_salary = salary * 1.05
         
-        # Connect to MySQL and save record using a parameterized query
+        
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         
@@ -33,7 +33,7 @@ def index():
         cursor.execute(query, values)
         conn.commit()
         
-        # Close connection
+        
         cursor.close()
         conn.close()
         
