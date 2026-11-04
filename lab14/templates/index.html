@@ -25,7 +25,32 @@
         <div class="formsession">
             <button type="submit">SUBMIT</button>
         </div>
+
+        <p id ="response"></p>
     </form>
+    <!-- LOADING ITEMS  -->
+    <section class="loaditems">
+        <h2>All items</h2>
+        <button onclick="loadItems()">Load Items</button>
+
+        <ul class="itemslist">
+
+        </ul>
+    </section>
+
+    <!-- TABLE TO UPDATE AND ITEM NAME AND PRICE -->
+     <section id="updatesection" style="display:none;">
+        <h3>Update Item</h3>
+        <input type="hidden " id="updateID">
+        <label>Name:
+            <input type="text" id="updateName">
+        </label>
+        <label>Price:
+            <input type="text" id="updatePrice" >
+        </label>
+
+        <button onclick="updateItem()">SAVE UPDATE</button>
+     </section>
 
     <script src="{{url_for('static', filename='app_script.js') }}"></script>
 </body>
