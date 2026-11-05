@@ -1,5 +1,265 @@
-*{box-sizing: border-box;}
+/* ---------- Tokens ---------- */
+:root {
+    --bg: #eef3f0;
+    --surface: #ffffff;
+    --ink: #14261e;
+    --ink-soft: #55675d;
+    --line: #d3ddd7;
+    --green: #1d6b4a;
+    --green-dark: #124a33;
+    --green-tint: #e2f0e8;
+    --danger: #b3261e;
+    --danger-tint: #fbeae8;
+    --radius: 10px;
+    --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* ---------- Page ---------- */
+body {
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+    max-width: 640px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
 .title {
+    margin: 0 0 1.75rem;
     text-align: center;
-    color: darkgreen;
+    color: var(--green-dark);
+    font-size: clamp(2rem, 6vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+h1 {
+    margin: 0 0 1rem;
+    font-size: 1.75rem;
+    letter-spacing: -0.01em;
+}
+
+h2 {
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+h3 {
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+p {
+    margin: 0 0 0.75rem;
+}
+
+a {
+    color: var(--green);
+    font-weight: 600;
+}
+
+a:hover {
+    color: var(--green-dark);
+}
+
+/* ---------- Cards ---------- */
+#itemForm,
+.loaditems,
+#updatesection {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
+#updatesection {
+    border-left: 4px solid var(--green);
+}
+
+/* ---------- Form fields ---------- */
+.formsession {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.9rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+input[type="text"],
+input[type="number"] {
+    display: block;
+    width: 100%;
+    margin-top: 0.35rem;
+    padding: 0.65rem 0.8rem;
+    font: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    background: var(--surface);
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-tint);
+}
+
+/* the hidden ID field in index.html has a typo (type="hidden "), this keeps it out of sight either way */
+#updateID {
+    display: none;
+}
+
+/* ---------- Buttons ---------- */
+button {
+    padding: 0.55rem 1.1rem;
+    font: inherit;
+    font-weight: 600;
+    color: var(--green-dark);
+    background: var(--green-tint);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.05s;
+}
+
+button:hover {
+    background: #cfe6d9;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid var(--green);
+    outline-offset: 2px;
+}
+
+/* primary actions */
+button[type="submit"],
+#updatesection > button {
+    color: #fff;
+    background: var(--green);
+}
+
+button[type="submit"]:hover,
+#updatesection > button:hover {
+    background: var(--green-dark);
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 0.75rem;
+}
+
+#updatesection > button {
+    margin-top: 0.25rem;
+}
+
+/* delete buttons */
+button[onclick^="deleteItem"] {
+    color: var(--danger);
+    background: var(--danger-tint);
+}
+
+button[onclick^="deleteItem"]:hover {
+    color: #fff;
+    background: var(--danger);
+}
+
+/* ---------- Response message ---------- */
+#response {
+    margin: 0;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.9rem;
+    word-break: break-word;
+    background: var(--green-tint);
+    border-radius: 8px;
+}
+
+#response:empty {
+    display: none;
+}
+
+/* ---------- Items list ---------- */
+.loaditems > button {
+    margin-bottom: 0.5rem;
+}
+
+.itemslist {
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.itemslist li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 0;
+    border-top: 1px solid var(--line);
+    font-size: 0.95rem;
+}
+
+.itemslist li button {
+    padding: 0.35rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+/* push the Update/Delete buttons to the right of each row */
+.itemslist li button:first-of-type {
+    margin-left: auto;
+}
+
+/* ---------- Update / Delete result pages ---------- */
+body > h1 + p {
+    margin-bottom: 0.4rem;
+    color: var(--ink-soft);
+}
+
+body > p + a,
+body > a {
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 480px) {
+    body {
+        padding: 1.25rem 1rem 3rem;
+    }
+
+    #itemForm,
+    .loaditems,
+    #updatesection {
+        padding: 1.1rem;
+    }
+
+    .itemslist li button:first-of-type {
+        margin-left: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
 }
