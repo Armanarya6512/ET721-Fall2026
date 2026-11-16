@@ -1,3 +1,5 @@
+from datetime import date
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
 
@@ -9,6 +11,7 @@ class Fruit(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     variety = db.Column(db.String(80))
     season = db.Column(db.String(80))
+    expiration_date = db.Column(db.Date)
 
     # The `validates` decorator from SQLAlchemy is used for validation logic
     # When creating or modifying Fruit instance, it will automatically be called
@@ -40,19 +43,41 @@ class Fruit(db.Model):
             query = query.filter(Fruit.quantity <= max_quantity)
         return query.all()
 
+    def is_expired(self, today=None):
+        """A fruit is expired if its expiration date is before today.
+        A fruit with no expiration date is never expired."""
+        if self.expiration_date is None:
+            return False
+        today = today or date.today()
+        return self.expiration_date < today
+
+    @staticmethod
+    def get_expired(today=None):
+        """Return all fruits whose expiration date is before today."""
+        today = today or date.today()
+        return Fruit.query.filter(
+            Fruit.expiration_date.isnot(None),
+            Fruit.expiration_date < today
+        ).all()
+
     def serialize(self):
         return {
             'id': self.id,
             'name': self.name,
             'quantity': self.quantity,
             'variety': self.variety,
-            'season': self.season
+            'season': self.season,
+            'expiration_date': self.expiration_date.isoformat() if self.expiration_date else None
         }
 
 class FruitMetrics:
     @staticmethod
     def total_fruits(fruits):
         return len(fruits)
+
+    @staticmethod
+    def total_quantity(fruits):
+        return sum(fruit.quantity for fruit in fruits)
 
     @staticmethod
     def average_quantity(fruits):

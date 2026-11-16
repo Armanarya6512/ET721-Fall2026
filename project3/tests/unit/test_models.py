@@ -72,3 +72,4 @@ def test_createFruit_withNonIntegerQuantity_raisesAssertionError():
     """
     with pytest.raises(AssertionError):
         Fruit(name="Apple", quantity="ten")
+

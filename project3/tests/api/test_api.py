@@ -132,3 +132,121 @@ def test_searchFruits_withNoMatches_returnsNoResultsMessage(client):
     data = json.loads(response.data)
     assert response.status_code == 200
     assert data['message'] == 'No fruits found matching the search criteria'
+
+
+def test_addFruit_withExpirationDate_savesDate(client):
+    """
+    POST accepts an optional expiration_date and returns it when fruits are listed.
+    """
+    new_fruit = {"name": "Orange", "quantity": 5, "variety": "Navel", "season": "Winter",
+                 "expiration_date": "2030-01-15"}
+    response = client.post('/api/fruits', json=new_fruit)
+    assert response.status_code == 201
+
+    fruits = json.loads(client.get('/api/fruits').data)
+    orange = [f for f in fruits if f['name'] == 'Orange'][0]
+    assert orange['expiration_date'] == '2030-01-15'
+
+
+def test_addFruit_withInvalidDateFormat_returns400(client):
+    """
+    POST with a badly formatted date is rejected with a 400 error.
+    """
+    new_fruit = {"name": "Orange", "quantity": 5, "variety": "Navel", "season": "Winter",
+                 "expiration_date": "not-a-date"}
+    response = client.post('/api/fruits', json=new_fruit)
+    assert response.status_code == 400
+    assert 'YYYY-MM-DD' in json.loads(response.data)['message']
+
+
+def test_addFruit_withNonStringDate_returns400(client):
+    """
+    POST with a date that is not text (a number) is rejected with a 400 error.
+    """
+    new_fruit = {"name": "Orange", "quantity": 5, "variety": "Navel", "season": "Winter",
+                 "expiration_date": 12345}
+    response = client.post('/api/fruits', json=new_fruit)
+    assert response.status_code == 400
+
+
+def test_updateFruit_withExpirationDate_updatesDate(client):
+    """
+    PUT can set the expiration date of an existing fruit.
+    """
+    response = client.put('/api/fruits/1', json={"expiration_date": "2031-02-03"})
+    assert response.status_code == 200
+
+    fruits = json.loads(client.get('/api/fruits').data)
+    apple = [f for f in fruits if f['id'] == 1][0]
+    assert apple['expiration_date'] == '2031-02-03'
+
+
+def test_updateFruit_withInvalidDate_returns400AndKeepsFruitUnchanged(client):
+    """
+    PUT with a bad date is rejected and does not change the other fields either.
+    """
+    response = client.put('/api/fruits/1', json={"quantity": 99, "expiration_date": "bad"})
+    assert response.status_code == 400
+
+    fruits = json.loads(client.get('/api/fruits').data)
+    apple = [f for f in fruits if f['id'] == 1][0]
+    assert apple['quantity'] == 10  # unchanged
+
+
+def test_getExpiredFruits_returnsOnlyExpiredFruits(client):
+    """
+    GET /api/fruits/expired returns only fruits whose date has passed.
+    """
+    client.post('/api/fruits', json={"name": "Old Plum", "quantity": 3, "variety": "Red",
+                                     "season": "Summer", "expiration_date": "2000-01-01"})
+    client.post('/api/fruits', json={"name": "Fresh Plum", "quantity": 3, "variety": "Red",
+                                     "season": "Summer", "expiration_date": "2999-01-01"})
+
+    response = client.get('/api/fruits/expired')
+    data = json.loads(response.data)
+    assert response.status_code == 200
+    assert len(data) == 1
+    assert data[0]['name'] == 'Old Plum'
+
+
+def test_getExpiredFruits_whenNothingExpired_returnsEmptyList(client):
+    """
+    GET /api/fruits/expired returns an empty list when no fruit has expired.
+    """
+    response = client.get('/api/fruits/expired')
+    assert response.status_code == 200
+    assert json.loads(response.data) == []
+
+
+def test_getAnalytics_withFruits_returnsCorrectMetrics(client):
+    """
+    GET /api/fruits/analytics returns the total, total quantity, average and
+    most common fruit. Starting data is Apple (10) and Banana (20); adding a
+    second Apple (30) makes Apple the most common.
+    """
+    client.post('/api/fruits', json={"name": "Apple", "quantity": 30, "variety": "Fuji",
+                                     "season": "Fall"})
+
+    response = client.get('/api/fruits/analytics')
+    data = json.loads(response.data)
+    assert response.status_code == 200
+    assert data['total_fruits'] == 3
+    assert data['total_quantity'] == 60
+    assert data['average_quantity'] == 20
+    assert data['most_common_fruit'] == 'Apple'
+
+
+def test_getAnalytics_withEmptyInventory_returnsZerosAndNull(client):
+    """
+    With no fruits, analytics returns zeros and a null most common fruit.
+    """
+    client.delete('/api/fruits/1')
+    client.delete('/api/fruits/2')
+
+    response = client.get('/api/fruits/analytics')
+    data = json.loads(response.data)
+    assert response.status_code == 200
+    assert data['total_fruits'] == 0
+    assert data['total_quantity'] == 0
+    assert data['average_quantity'] == 0
+    assert data['most_common_fruit'] is None

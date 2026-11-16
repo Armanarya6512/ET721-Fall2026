@@ -108,6 +108,7 @@ def test_serialize_withFruit_returnsDictionaryOfAttributes():
         'quantity': 10,
         'variety': 'Gala',
         'season': 'Winter',
+        'expiration_date': None,
     }
 
 

@@ -1,6 +1,6 @@
 Arman Arya
 Professor Wu
- Software Development Practicum
+Software Development Practicum
 November 15, 2026
 
 # Report: The Benefits of Comprehensive Testing in Software Development
@@ -9,7 +9,7 @@ November 15, 2026
 
 * What was the initial test coverage? The starter project had 11 tests and 53% code coverage. The model code was at 60% and the API routes were only at 46%.
 * What is the final test coverage you were able to achieve? I reached 100% coverage for both app/models.py and app/routes.py.
-* How many tests did you end up having? I ended up with 29 tests: 10 API tests, 8 model tests, and 11 search and model-helper tests.
+* How many tests did you end up having? I ended up with 49 tests: 19 API tests, 8 model tests, 11 search and model-helper tests, and 11 expiration date tests.
 
 ## Untested Code: Effects
 
@@ -28,9 +28,10 @@ November 15, 2026
 
 ## New Features
 
-* What was your experience like having to add new features when you tested baseline code? In this assignment I focused on testing the existing code rather than building a new feature. Having a full test suite already in place means that when I do add something, such as the suggested expiry date for fruit, I can immediately see whether it broke anything that used to work.
+* What was your experience like having to add new features when you tested baseline code? After the baseline code was fully tested, I added the suggested features: an expiration date on each fruit, an endpoint that returns expired fruit (/api/fruits/expired), and an analytics endpoint (/api/fruits/analytics) that returns the total number of fruits, total quantity, average quantity, and most common fruit. I wrote 20 new tests for them. Because the existing tests were already in place, I could run the full suite after each change and confirm that nothing that worked before had broken.
 * Did it give you any feeling of security when trying out new features? Yes. With 100% coverage and all tests passing, I feel much more confident making changes, because a failing test would point out the problem right away.
 
 ## Future
 
 * What do you hope to takeaway from the experience having to write tests? I want to make testing a regular habit instead of something I do at the end. In future projects I plan to write tests as I build each feature, check coverage often, set up automated testing with GitHub Actions, and add tests for more unusual inputs, such as missing fields in a POST request, so the API is protected against more kinds of failures.
+
