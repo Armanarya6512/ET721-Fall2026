@@ -1,4 +1,3 @@
-// load all tasks
 function loadTasks() {
     fetch("/get_tasks")
         .then(response => response.json())
@@ -9,32 +8,22 @@ function loadTasks() {
             tasks.forEach(task => {
                 const li = document.createElement("li");
                 li.textContent = task.task;
-                list.appendChild(li);
+                li.classList.add("task_item");
 
-                // create delete button for each task
-const btn = document.createElement("button");
-btn.innerHTML = "&#10060;"; 
-btn.classList.add("btndeletetask");
-btn.onclick = () => {
-    fetch("/delete_task", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({task: task.task})
-    })
-    .then(() => loadTasks());
-};
-li.appendChild(btn);
-});
-});
+                const btn = document.createElement("button");
+                btn.innerHTML = "&#10060;";
+                btn.classList.add("btndeletetask");
+                btn.onclick = () => deleteTask(task.id);
+
+                li.appendChild(btn);
+                list.appendChild(li);
+            });
+        });
 }
 
-// load all tasks when the page loads
-window.onload = loadTasks;
-// add a new task
 function addTask() {
     const inputtask = document.querySelector("#task-input");
     const task = inputtask.value.trim();
-
     if (task === "") return;
 
     fetch("/add_task", {
@@ -48,5 +37,13 @@ function addTask() {
     });
 }
 
-// run loadTasks when the page opens
+function deleteTask(id) {
+    fetch("/delete_task", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: id })
+    })
+    .then(() => loadTasks());
+}
+
 loadTasks();
